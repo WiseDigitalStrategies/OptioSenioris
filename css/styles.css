@@ -93,8 +93,7 @@ p { margin: 0 0 24px; }
 
 /* ---------- Hero ---------- */
 .hero { position: relative; min-height: 699px; display: flex; background: var(--navy); color: #fff; overflow: hidden; }
-.hero-photo { position: absolute; inset: 0; background: center top / cover no-repeat; }
-.hero-photo--low { background-position: center bottom; }
+.hero-photo { position: absolute; inset: 0; background: center 30% / cover no-repeat; }
 .hero::after { content: ""; position: absolute; inset: 0; background: var(--overlay); }
 .hero .container { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-top: 80px; padding-bottom: 198px; }
 .hero h1 { color: #fff; max-width: 848px; margin: 0 0 11px; }
@@ -185,7 +184,7 @@ p { margin: 0 0 24px; }
 
 /* Photo band (full-bleed story) */
 .band { position: relative; min-height: 699px; display: flex; background: var(--navy); color: #fff; overflow: hidden; }
-.band-photo { position: absolute; inset: 0; background: center top / cover no-repeat; }
+.band-photo { position: absolute; inset: 0; background: center 30% / cover no-repeat; }
 .band::after { content: ""; position: absolute; inset: 0; background: var(--overlay); }
 .band .container { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: center; padding-top: 80px; padding-bottom: 80px; }
 .band-text { max-width: 630px; }
