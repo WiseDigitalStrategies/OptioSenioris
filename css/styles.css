@@ -125,7 +125,7 @@ p { margin: 0 0 24px; }
 .subnav a:hover, .subnav a[aria-current="page"] { background: var(--gold); color: #fff; }
 
 /* ---------- Photo cards (services) ---------- */
-.photo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+.photo-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .photo-card { position: relative; display: flex; align-items: center; justify-content: center; height: 523px; padding: 30px; border-radius: var(--radius); overflow: hidden; text-decoration: none; text-align: center; background: var(--navy) center / cover no-repeat; }
 .photo-card::before { content: ""; position: absolute; inset: 0; background: var(--overlay); transition: background 0.25s; }
 .photo-card:hover::before, .photo-card:focus-visible::before { background: rgba(5, 77, 73, 0.75); }
@@ -373,6 +373,7 @@ table.compare { width: 100%; min-width: 620px; border-collapse: separate; border
   .hero .btn-row { margin-top: 36px; }
   .hero--contact { min-height: 420px; }
   .hero--contact .container { justify-content: flex-start; padding-bottom: 140px; }
+  .photo-cards { grid-template-columns: 1fr; }
   .photo-card { height: 380px; }
   .tiles { grid-template-columns: repeat(2, 1fr); }
   .split, .overlap { grid-template-columns: minmax(0, 1fr); gap: 40px; }
