@@ -267,6 +267,9 @@ table.compare { width: 100%; min-width: 620px; border-collapse: separate; border
 .form input[type="file"] { height: auto; padding: 14px 20px; letter-spacing: 0.5px; }
 .form ::placeholder { color: #b4b4b4; opacity: 1; }
 .form .btn { justify-self: end; margin-top: 19px; }
+.form label.form-consent { display: flex; gap: 12px; align-items: flex-start; font-weight: 400; }
+.form .form-consent input { flex: none; width: 22px; height: 22px; margin: 1px 0 0; padding: 0; accent-color: var(--green); }
+.form-hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .form-note { font-size: 0.85rem; color: #54626f; margin: 6px 0 0; }
 
 /* Enquiry section (blush panel with photo) */

@@ -66,8 +66,7 @@
           </div>
           <div>
             <h2>Send us a message</h2>
-            <!-- TODO: connect this form to a form handler; it does not send anywhere yet -->
-          <form class="form" action="#" method="post">
+          <form class="form" action="/api/forms/contact" method="post">
             <label for="contact-name">Full name</label>
             <input id="contact-name" name="name" type="text" placeholder="Full Name" autocomplete="name" required>
             <label for="contact-phone">Phone number</label>
@@ -76,6 +75,8 @@
             <input id="contact-email" name="email" type="email" placeholder="Email Address" autocomplete="email" required>
             <label for="contact-message">Message</label>
             <textarea id="contact-message" name="message" placeholder="Write message here" required></textarea>
+            <div class="form-hp" aria-hidden="true"><label for="contact-website">Leave this field empty</label><input id="contact-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+            <label class="visible form-consent" for="contact-consent"><input id="contact-consent" name="consent" type="checkbox" value="yes" required> I agree that Optio Senioris may contact me about my enquiry.</label>
             <button class="btn btn-gold" type="submit">Send Message</button>
           </form>
           </div>
@@ -122,5 +123,6 @@
       <p class="copyright">Optio Senioris &copy; 2026. All rights reserved.</p>
     </div>
   </footer>
+  <script src="/js/chat-widget.js" defer></script>
 </body>
 </html>

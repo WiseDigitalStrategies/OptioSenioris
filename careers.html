@@ -182,8 +182,7 @@
           <p class="note">Please do not send identity documents by email. We will give you a secure way to provide them.</p>
         </div>
         <div>
-          <!-- TODO: connect this form to a form handler that accepts file uploads; it does not send anywhere yet -->
-          <form class="form" action="#" method="post" enctype="multipart/form-data">
+          <form class="form" action="/api/forms/careers" method="post" enctype="multipart/form-data">
             <label for="app-name">Full name</label>
             <input id="app-name" name="name" type="text" placeholder="Full Name" autocomplete="name" required>
             <label for="app-phone">Phone number</label>
@@ -202,6 +201,8 @@
             <input id="app-resume" name="resume" type="file" accept=".pdf,.doc,.docx" required>
             <label for="app-message">Message</label>
             <textarea id="app-message" name="message" placeholder="Tell us about yourself"></textarea>
+            <div class="form-hp" aria-hidden="true"><label for="app-website">Leave this field empty</label><input id="app-website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
+            <label class="visible form-consent" for="app-consent"><input id="app-consent" name="consent" type="checkbox" value="yes" required> I agree that Optio Senioris may contact me about my application.</label>
             <button class="btn" type="submit">Send Application</button>
           </form>
         </div>
@@ -239,5 +240,6 @@
       <p class="copyright">Optio Senioris &copy; 2026. All rights reserved.</p>
     </div>
   </footer>
+  <script src="/js/chat-widget.js" defer></script>
 </body>
 </html>
