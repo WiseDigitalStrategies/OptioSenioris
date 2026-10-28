@@ -1,2 +1,7 @@
 .DS_Store
 .wrangler/
+node_modules/
+dist/
+.dev.vars
+# Roster files with real names stay on your machine. Only the template is committed.
+roster/

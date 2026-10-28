@@ -1,0 +1,53 @@
+# Cloudflare Pages configuration for optiosenioris.net. Secrets are never kept
+# here: set them with `npx wrangler pages secret put NAME` (see README).
+# Production = the main branch. Preview = every other branch, including staging.
+
+name = "optiosenioris"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+SITE_URL = "https://optiosenioris.net"
+CF_ACCOUNT_ID = "6295bc7f9ae3b9b984a320bece2ac1c2"
+ANTHROPIC_MODEL = "claude-opus-5-5"
+ANTHROPIC_EFFORT = "medium"
+DEBUG_TOOLS = "0"
+# PLACEHOLDER: Turnstile site key (public) for optiosenioris.net.
+TURNSTILE_SITE_KEY = ""
+# PLACEHOLDER: Cloudflare Access team domain (e.g. optio.cloudflareaccess.com)
+# and the Application Audience (AUD) tag of the /admin Access application.
+ACCESS_TEAM_DOMAIN = ""
+ACCESS_AUD = ""
+
+[[d1_databases]]
+binding = "DB"
+database_name = "optio-assistant"
+database_id = "b00ae597-3a4e-4d78-b36b-fc14c67b3711"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "RESUMES"
+bucket_name = "optio-resumes"
+
+[env.preview.vars]
+SITE_URL = "https://staging.optiosenioris.pages.dev"
+CF_ACCOUNT_ID = "6295bc7f9ae3b9b984a320bece2ac1c2"
+ANTHROPIC_MODEL = "claude-opus-5-5"
+ANTHROPIC_EFFORT = "medium"
+# Staging returns tool calls in chat responses for the conversation tests.
+DEBUG_TOOLS = "1"
+# Cloudflare's published Turnstile test key: always passes. Staging only.
+TURNSTILE_SITE_KEY = "1x00000000000000000000AA"
+ACCESS_TEAM_DOMAIN = ""
+ACCESS_AUD = ""
+
+[[env.preview.d1_databases]]
+binding = "DB"
+database_name = "optio-assistant-staging"
+database_id = "ff475bb6-416b-4c83-8a7d-9f2eb97e44d9"
+migrations_dir = "migrations"
+
+[[env.preview.r2_buckets]]
+binding = "RESUMES"
+bucket_name = "optio-resumes-staging"
