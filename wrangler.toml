@@ -10,8 +10,8 @@ compatibility_flags = ["nodejs_compat"]
 [vars]
 SITE_URL = "https://optiosenioris.net"
 CF_ACCOUNT_ID = "6295bc7f9ae3b9b984a320bece2ac1c2"
-ANTHROPIC_MODEL = "claude-opus-5-5"
-ANTHROPIC_EFFORT = "medium"
+ANTHROPIC_MODEL = "claude-sonnet-5-5"
+ANTHROPIC_EFFORT = "low"
 DEBUG_TOOLS = "0"
 # PLACEHOLDER: Turnstile site key (public) for optiosenioris.net.
 TURNSTILE_SITE_KEY = ""
@@ -33,8 +33,8 @@ bucket_name = "optio-resumes"
 [env.preview.vars]
 SITE_URL = "https://staging.optiosenioris.pages.dev"
 CF_ACCOUNT_ID = "6295bc7f9ae3b9b984a320bece2ac1c2"
-ANTHROPIC_MODEL = "claude-opus-5-5"
-ANTHROPIC_EFFORT = "medium"
+ANTHROPIC_MODEL = "claude-sonnet-5-5"
+ANTHROPIC_EFFORT = "low"
 # Staging returns tool calls in chat responses for the conversation tests.
 DEBUG_TOOLS = "1"
 # Cloudflare's published Turnstile test key: always passes. Staging only.

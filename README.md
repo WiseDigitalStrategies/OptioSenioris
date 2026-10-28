@@ -95,7 +95,7 @@ Everything Jill or Wise still has to confirm is in this one file. While a value 
 | `floridaAbuseHotline` | unverified: the bot names the hotline without a number. Verify the number before launch |
 | `email.confirmation` | off until Alec approves the wording |
 
-The model is set by `ANTHROPIC_MODEL` in `wrangler.toml` (currently `claude-opus-5-5`, effort `medium`). To switch to `claude-sonnet-5-5`, which costs about half as much per token, change the variable and push; no code changes are needed. After any model or prompt change, run the staging conversation tests.
+The model is set by `ANTHROPIC_MODEL` and `ANTHROPIC_EFFORT` in `wrangler.toml`. It is tuned for low cost: `claude-sonnet-5-5` at effort `low`, with the shared prompt and the conversation so far cached between turns. If answers feel thin, raise the effort to `medium` before changing the model. After any model or prompt change, run the staging conversation tests.
 
 ## Updating the roster
 

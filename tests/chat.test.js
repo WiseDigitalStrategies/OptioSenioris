@@ -11,7 +11,7 @@ beforeEach(async () => {
   db = testDb();
   await seedRoster(db);
   config = testConfig();
-  env = { DB: db, ANTHROPIC_API_KEY: API_KEY, SESSION_SECRET: TEST_SECRET, TURNSTILE_SECRET_KEY: "ts-secret", ANTHROPIC_MODEL: "claude-opus-5-5" };
+  env = { DB: db, ANTHROPIC_API_KEY: API_KEY, SESSION_SECRET: TEST_SECRET, TURNSTILE_SECRET_KEY: "ts-secret", ANTHROPIC_MODEL: "claude-sonnet-5-5" };
   turnstileOk = true;
   calls = [];
   globalThis.fetch = async (url) => {
@@ -78,12 +78,13 @@ test("model settings: env model, effort, strict tools, cached facts, refusal fal
   env.ANTHROPIC_EFFORT = "low";
   await chat({ mode: "caregiver", message: "hi", turnstileToken: "tok" }, [text("hello")]);
   const p = calls[0];
-  assert.equal(p.model, "claude-opus-5-5");
+  assert.equal(p.model, "claude-sonnet-5-5");
   assert.deepEqual(p.output_config, { effort: "low" });
   assert.equal(p.fallbacks, "default");
   assert.deepEqual(p.betas, ["server-side-fallback-2026-07-01"]);
   assert.equal(p.system[0].text, "SYSTEM PROMPT");
   assert.deepEqual(p.system[1].cache_control, { type: "ephemeral" });
+  assert.deepEqual(p.cache_control, { type: "ephemeral" });
   assert.match(p.system[2].text, /caregiver mode/);
   assert.equal(p.tools.length, 5);
   assert.equal(p.thinking, undefined);
