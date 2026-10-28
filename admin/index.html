@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Optio Senioris Admin</title>
+  <link rel="stylesheet" href="/admin/admin.css">
+  <script src="/admin/admin.js" defer></script>
+</head>
+<body>
+  <header class="bar">
+    <h1>Optio Senioris admin</h1>
+    <p id="who" class="muted"></p>
+  </header>
+  <nav class="tabs" aria-label="Sections">
+    <button type="button" data-tab="leads" aria-pressed="true">Enquiries</button>
+    <button type="button" data-tab="escalations" aria-pressed="false">Flagged chats</button>
+    <button type="button" data-tab="applicants" aria-pressed="false">Applicants</button>
+    <button type="button" data-tab="roster" aria-pressed="false">Caregiver roster</button>
+  </nav>
+  <main id="main">
+    <p id="status" role="status" class="muted"></p>
+    <section id="view" aria-live="polite"></section>
+  </main>
+</body>
+</html>
