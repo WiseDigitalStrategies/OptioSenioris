@@ -13,8 +13,8 @@ CF_ACCOUNT_ID = "6295bc7f9ae3b9b984a320bece2ac1c2"
 ANTHROPIC_MODEL = "claude-sonnet-5-5"
 ANTHROPIC_EFFORT = "low"
 DEBUG_TOOLS = "0"
-# PLACEHOLDER: Turnstile site key (public) for optiosenioris.net.
-TURNSTILE_SITE_KEY = ""
+# Turnstile site key (public) for optiosenioris.net.
+TURNSTILE_SITE_KEY = "0x4AAAAAAFwDwUq9Ii9zR_dq"
 # PLACEHOLDER: Cloudflare Access team domain (e.g. optio.cloudflareaccess.com)
 # and the Application Audience (AUD) tag of the /admin Access application.
 ACCESS_TEAM_DOMAIN = ""

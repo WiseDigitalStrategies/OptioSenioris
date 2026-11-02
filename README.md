@@ -31,7 +31,7 @@ The model is called only from the server, with the API key from a Cloudflare sec
 | URL | https://optiosenioris.net | https://staging.optiosenioris.pages.dev |
 | D1 database | `optio-assistant` | `optio-assistant-staging` |
 | R2 bucket | `optio-resumes` | `optio-resumes-staging` |
-| Turnstile | real keys (to set up) | Cloudflare's always-pass test keys |
+| Turnstile | real keys | Cloudflare's always-pass test keys |
 | Tool calls in responses (`DEBUG_TOOLS`) | off | on, for the conversation tests |
 
 Non-secret settings live in `wrangler.toml`. Production is the top level and staging is `[env.preview]`. When `wrangler.toml` exists, it overrides bindings and variables set in the dashboard.
