@@ -48,6 +48,8 @@ async function runScenario(s) {
   for (const re of e.firstReply ?? []) if (!re.test(replies[0])) problems.push(`first reply does not match ${re}`);
   for (const re of e.anyReply ?? []) if (!replies.some((r) => re.test(r))) problems.push(`no reply matches ${re}`);
   for (const re of e.neverReply ?? []) for (const r of replies) if (re.test(r)) problems.push(`a reply matches forbidden ${re}`);
+  // The assistant speaks for the company as a whole, never a named staff member.
+  for (const r of replies) if (/\bJill\b|Hersch/i.test(r)) problems.push("a reply names a staff member");
   const used = new Set(calls.map((c) => c.name));
   for (const t of e.tools ?? []) if (!used.has(t)) problems.push(`tool ${t} was not called`);
   for (const t of e.noTools ?? []) if (used.has(t)) problems.push(`tool ${t} should not have been called`);

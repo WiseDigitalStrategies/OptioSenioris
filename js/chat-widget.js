@@ -116,7 +116,7 @@
       el(
         "div",
         { class: "osc-intro" },
-        el("p", { text: mode === "family" ? "Looking for care for someone you love? I can help you get started." : "Interested in working with Optio Senioris? I can take your details for Jill's team." }),
+        el("p", { text: mode === "family" ? "Looking for care for someone you love? I can help you get started." : "Interested in working with Optio Senioris? I can take your details for our team." }),
         el("p", { class: "osc-small", text: settings.notice }),
         policy ? el("p", { class: "osc-small" }, policy) : null,
         el("p", { class: "osc-small", text: "By starting the chat you agree that we may use what you tell us to follow up with you. You can also call us on " + settings.phone + "." }),

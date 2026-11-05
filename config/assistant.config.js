@@ -8,10 +8,14 @@ export default {
   botName: "Optio Senioris Care Assistant",
   greeting: {
     family:
-      "Hello. I'm the Optio Senioris Care Assistant, an AI helper. I can learn a little about the care you're looking for, suggest caregivers who may fit, and pass everything to Jill's team so a real person can call you. How can I help today?",
+      "Hello. I'm the Optio Senioris Care Assistant, an AI helper. I can learn a little about the care you're looking for, suggest caregivers who may fit, and pass everything to our team so a real person can call you. How can I help today?",
     caregiver:
-      "Hello. I'm the Optio Senioris Care Assistant, an AI helper. If you're a caregiver or nurse interested in working with Optio Senioris, I can take a few details and pass them to Jill's team for review. What role are you interested in?",
+      "Hello. I'm the Optio Senioris Care Assistant, an AI helper. If you're a caregiver or nurse interested in working with Optio Senioris, I can take a few details and pass them to our team for review. What role are you interested in?",
   },
+
+  // Staff names the assistant must never say. It speaks of the company as a
+  // whole; any of these that slips into a reply is replaced with "our team".
+  staffNames: ["Jill", "Hersch"],
 
   business: {
     name: "Optio Senioris",
@@ -89,7 +93,7 @@ export default {
   privacy: {
     policyUrl: null,
     notice:
-      "This chat is run by an AI assistant, not a person. We ask for a few details about what you're looking for and how to reach you so that a member of Jill's team can follow up. Please don't share medical records, insurance or Medicaid numbers, Social Security numbers or financial details.",
+      "This chat is run by an AI assistant, not a person. We ask for a few details about what you're looking for and how to reach you so that a member of our team can follow up. Please don't share medical records, insurance or Medicaid numbers, Social Security numbers or financial details.",
   },
 
   // PLACEHOLDER: retention period in days for leads, applicants and

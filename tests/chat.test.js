@@ -167,3 +167,26 @@ test("the chat reports itself disabled when secrets are missing", async () => {
   const { res } = await chat({ mode: "family", message: "hi", turnstileToken: "tok" }, []);
   assert.equal(res.status, 503);
 });
+
+test("nothing the bot reads or shows names Jill: prompt, tools, greetings, notice, widget", async () => {
+  const fs = await import("node:fs");
+  const { toolDefinitions } = await import("../lib/tools.js");
+  const { default: realConfig } = await import("../config/assistant.config.js");
+  const { buildFacts } = await import("../lib/facts.js");
+  const shown = [
+    fs.readFileSync(new URL("../prompts/system-prompt.txt", import.meta.url), "utf8"),
+    JSON.stringify(toolDefinitions(realConfig)),
+    JSON.stringify(publicSettings({ ...env, TURNSTILE_SITE_KEY: "k" }, realConfig)),
+    buildFacts(realConfig),
+    fs.readFileSync(new URL("../js/chat-widget.js", import.meta.url), "utf8"),
+  ].join("\n");
+  assert.doesNotMatch(shown, /jill|hersch/i);
+});
+
+test("a staff name that slips into a reply becomes 'our team', unless the visitor used it", async () => {
+  config.staffNames = ["Jill", "Hersch"];
+  const r = await chat({ mode: "family", message: "hi", turnstileToken: "tok" }, [text("Jill's team will call you. Jill Hersch owns the business, and Jill will help.")]);
+  assert.equal(r.data.reply, "Our team will call you. Our team owns the business, and our team will help.");
+  const own = await chat({ mode: "family", message: "Hi, my name is Jill", turnstileToken: "tok" }, [text("Thank you, Jill.")], "203.0.113.9");
+  assert.equal(own.data.reply, "Thank you, Jill.");
+});
