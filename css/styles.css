@@ -97,6 +97,7 @@ p { margin: 0 0 24px; }
 .hero::after { content: ""; position: absolute; inset: 0; background: var(--overlay); }
 .hero .container { position: relative; z-index: 1; display: flex; flex-direction: column; justify-content: flex-end; padding-top: 80px; padding-bottom: 198px; }
 .hero h1 { color: #fff; max-width: 848px; margin: 0 0 11px; }
+.hero h1 .hero-sub { display: block; font-size: 0.6em; line-height: 1.15; margin-top: 10px; }
 .hero p { font-weight: 500; font-size: 24px; line-height: 1; max-width: 622px; margin: 0; }
 .hero .eyebrow { color: #fff; font-size: 18px; font-weight: 400; line-height: 24px; margin-bottom: 19px; }
 .hero .btn-row { margin-top: 50px; }
