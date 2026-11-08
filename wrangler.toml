@@ -15,10 +15,10 @@ ANTHROPIC_EFFORT = "low"
 DEBUG_TOOLS = "0"
 # Turnstile site key (public) for optiosenioris.net.
 TURNSTILE_SITE_KEY = "0x4AAAAAAFwDwUq9Ii9zR_dq"
-# PLACEHOLDER: Cloudflare Access team domain (e.g. optio.cloudflareaccess.com)
-# and the Application Audience (AUD) tag of the /admin Access application.
-ACCESS_TEAM_DOMAIN = ""
-ACCESS_AUD = ""
+# Cloudflare Access team domain and the Application Audience (AUD) tag of
+# the /admin Access application. Both are public; the site checks logins against them.
+ACCESS_TEAM_DOMAIN = "orbitrex-new-pages.cloudflareaccess.com"
+ACCESS_AUD = "11c2a543f924deee9c69aa22d9f11cf003b850d20d537674e948484746b068eb"
 
 [[d1_databases]]
 binding = "DB"
