@@ -30,9 +30,9 @@ const lead = (over = {}) => ({
 
 const search = { service: "private_duty_home_care", min_credential: "CNA", skills: ["dementia"], days: ["mon", "tue", "wed", "thu", "fri"], times: ["am"], start_date: "", hours: "", preferred_caregiver: "", preferred_skills: [] };
 
-test("tool definitions are strict, closed and fully required", () => {
+test("tool definitions are not strict (the API rejects the combined grammar), closed and fully required", () => {
   for (const t of toolDefinitions(config)) {
-    assert.equal(t.strict, true, t.name);
+    assert.equal(t.strict, undefined, t.name);
     const check = (schema) => {
       if (schema.type !== "object") return;
       assert.equal(schema.additionalProperties, false);

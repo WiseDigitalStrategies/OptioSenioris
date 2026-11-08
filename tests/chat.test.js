@@ -74,7 +74,7 @@ test("a turn returns a reply and a signed state that carries the conversation", 
   assert.equal(calls[1].messages[2].content, "Venice");
 });
 
-test("model settings: env model, effort, strict tools, cached facts, refusal fallbacks", async () => {
+test("model settings: env model, effort, tools, cached facts, refusal fallbacks", async () => {
   env.ANTHROPIC_EFFORT = "low";
   await chat({ mode: "caregiver", message: "hi", turnstileToken: "tok" }, [text("hello")]);
   const p = calls[0];
