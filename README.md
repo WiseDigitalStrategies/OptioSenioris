@@ -124,11 +124,16 @@ The staff spreadsheet contains SSNs and dates of birth. Process it only on your 
 
 ## Admin page
 
-Go to https://optiosenioris.net/admin and sign in through Cloudflare Access. It has four tabs:
-- **Enquiries:** each lead's contact details, needs, schedule, suggested caregivers with reasons, status (including "Bereavement" and "Deceased: do not contact"), notes, and a delete button.
-- **Flagged chats:** escalations such as emergencies, bereavement, routing, and no-match cases.
-- **Applicants:** chat and careers-form applicants, a résumé download, status, and delete. Applicants never join the roster automatically.
-- **Caregiver roster:** add a caregiver, or change credential, status, availability and skills.
+Go to https://optiosenioris.net/admin and sign in through Cloudflare Access. The dashboard has five sections, with counts of new items in the sidebar:
+- **Overview:** totals at a glance and a "Needs your attention" list of open flagged chats and new enquiries, urgent ones first.
+- **Enquiries:** search and filter by status; open one to see contact details (with Call and Email buttons), needs, schedule, suggested caregivers with reasons, and to set the status (including "Bereavement" and "Deceased: do not contact"), add notes, or delete it.
+- **Flagged chats:** escalations such as emergencies, bereavement, routing, and no-match cases, with a "Mark handled" button.
+- **Applicants:** chat and careers-form applicants, a résumé download, status, and delete. Applicants never join the caregiver list automatically.
+- **Caregivers:** a table with each caregiver's week at a glance; add one, or click a name to change credential, status, availability and skills.
+
+Links in notification emails open the matching record. On a phone, the list and the record show one at a time.
+
+To work on the dashboard's design without signing in, run `node scripts/admin-preview.mjs` and open http://localhost:8790/admin/. It serves the dashboard with made-up data and never touches the real database.
 
 ## Development
 

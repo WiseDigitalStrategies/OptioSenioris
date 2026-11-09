@@ -4,24 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex">
-  <title>Optio Senioris Admin</title>
+  <title>Optio Senioris Dashboard</title>
   <link rel="stylesheet" href="/admin/admin.css">
   <script src="/admin/admin.js" defer></script>
 </head>
 <body>
-  <header class="bar">
-    <h1>Optio Senioris admin</h1>
-    <p id="who" class="muted"></p>
-  </header>
-  <nav class="tabs" aria-label="Sections">
-    <button type="button" data-tab="leads" aria-pressed="true">Enquiries</button>
-    <button type="button" data-tab="escalations" aria-pressed="false">Flagged chats</button>
-    <button type="button" data-tab="applicants" aria-pressed="false">Applicants</button>
-    <button type="button" data-tab="roster" aria-pressed="false">Caregiver roster</button>
-  </nav>
-  <main id="main">
-    <p id="status" role="status" class="muted"></p>
-    <section id="view" aria-live="polite"></section>
-  </main>
+  <div class="app">
+    <aside class="side">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">O</span>
+        <span class="brand-text"><strong>Optio Senioris</strong><span>Dashboard</span></span>
+      </div>
+      <nav class="nav" aria-label="Sections">
+        <a href="#overview" data-view="overview"><span class="nav-label">Overview</span></a>
+        <a href="#enquiries" data-view="leads"><span class="nav-label">Enquiries</span><span class="count" data-count="leads"></span></a>
+        <a href="#flagged" data-view="escalations"><span class="nav-label">Flagged chats</span><span class="count urgent" data-count="escalations"></span></a>
+        <a href="#applicants" data-view="applicants"><span class="nav-label">Applicants</span><span class="count" data-count="applicants"></span></a>
+        <a href="#caregivers" data-view="roster"><span class="nav-label">Caregivers</span></a>
+      </nav>
+      <p id="who" class="who"></p>
+    </aside>
+    <main id="main" class="main" tabindex="-1">
+      <div id="view"></div>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
