@@ -38,7 +38,7 @@ Non-secret settings live in `wrangler.toml`. Production is the top level and sta
 
 ## Setup checklist
 
-Already done: both D1 databases are created and migrated, both R2 buckets are created, `SESSION_SECRET` is set in both environments, the staging Turnstile test secret is set, and the made-up test roster is loaded into staging. The Pages build command is `npm run build`.
+Already done: both D1 databases are created and migrated, both R2 buckets are created, `SESSION_SECRET` is set in both environments, the staging Turnstile test secret is set, and the made-up test roster is loaded into staging. The Pages build command is `npm run build`. On production, the Anthropic API key, Turnstile and Cloudflare Access for the admin page are also set up (Access team `orbitrex-new-pages`; add or remove admin users in that application's policy). Steps 1 to 3 below are kept for reference.
 
 Still to do before the chat appears on the live site. It stays hidden until `ANTHROPIC_API_KEY` is set.
 
