@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import { beforeEach, test } from "node:test";
 import { handleAdmin } from "../lib/admin.js";
-import { handleCareersForm, handleContactForm } from "../lib/forms.js";
-import { fakeBucket, seedRoster, testConfig, testDb } from "./helpers.js";
+import { handleCareersForm, handleChatResume, handleContactForm } from "../lib/forms.js";
+import { open, seal } from "../lib/state.js";
+import { TEST_SECRET, fakeBucket, seedRoster, testConfig, testDb } from "./helpers.js";
 
 let db, env, config;
 beforeEach(async () => {
@@ -69,6 +70,41 @@ test("the careers form refuses files that are not really PDF or Word", async () 
   const fake = new File([new TextEncoder().encode("<html>")], "resume.pdf");
   const res = await handleCareersForm({ request: form("/api/forms/careers", { ...careers(), resume: fake }), env, config });
   assert.equal(res.status, 400);
+  assert.equal(env.RESUMES.store.size, 0);
+});
+
+async function chatState(fields = {}) {
+  return seal({ sid: "s-1", mode: "caregiver", created: Date.now(), verified: true, turns: 2, messages: [], ...fields }, TEST_SECRET);
+}
+
+test("a resume attached in the chat is stored privately on the saved applicant", async () => {
+  env.SESSION_SECRET = TEST_SECRET;
+  const { id } = await db.prepare("INSERT INTO applicants (ref, source, name) VALUES ('OSC-CHAT01','chat','Morgan') RETURNING id").first();
+  const res = await handleChatResume({ request: form("/api/resume", { state: await chatState({ applicantId: id }), resume: pdf() }), env, config });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.name, "My Resume.pdf");
+  assert.equal((await open(body.state, TEST_SECRET)).resumeName, "My Resume.pdf");
+  const a = await db.prepare("SELECT * FROM applicants WHERE id = ?1").bind(id).first();
+  assert.match(a.resume_key, /^resumes\/[0-9a-f-]{36}\.pdf$/);
+  assert.ok(env.RESUMES.store.has(a.resume_key));
+
+  // A second upload replaces the first file.
+  const again = await handleChatResume({ request: form("/api/resume", { state: body.state, resume: pdf() }), env, config });
+  assert.equal(again.status, 200);
+  assert.equal(env.RESUMES.store.size, 1);
+});
+
+test("the chat resume upload needs a saved applicant, a valid conversation and a real document", async () => {
+  env.SESSION_SECRET = TEST_SECRET;
+  const early = await handleChatResume({ request: form("/api/resume", { state: await chatState(), resume: pdf() }), env, config });
+  assert.equal(early.status, 400);
+  assert.equal((await early.json()).error, "not_ready");
+  const forged = await handleChatResume({ request: form("/api/resume", { state: "e30.bad", resume: pdf() }), env, config });
+  assert.equal((await forged.json()).error, "session_expired");
+  const fake = new File([new TextEncoder().encode("<html>")], "resume.pdf");
+  const bad = await handleChatResume({ request: form("/api/resume", { state: await chatState({ applicantId: 1 }), resume: fake }), env, config });
+  assert.equal((await bad.json()).error, "invalid_file");
   assert.equal(env.RESUMES.store.size, 0);
 });
 

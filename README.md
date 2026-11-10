@@ -14,6 +14,7 @@ The system keeps client and caregiver data confidential with reasonable security
 | Tools Claude can call | `lib/tools.js` (search, save lead, save applicant, book call, escalate) |
 | Caregiver matching (deterministic, not the model) | `lib/matching.js` |
 | Plain HTML form handlers (work with JavaScript off) | `functions/api/forms/*.js` → `lib/forms.js` |
+| Résumé upload from the chat | `functions/api/resume.js` → `lib/forms.js` |
 | Admin page and API (behind Cloudflare Access) | `admin/`, `functions/api/admin/[[path]].js` → `lib/admin.js` |
 | www → root redirect, admin guard | `functions/_middleware.js` |
 | Every placeholder and fact the bot may state | `config/assistant.config.js` |
@@ -21,7 +22,7 @@ The system keeps client and caregiver data confidential with reasonable security
 | Database schema | `migrations/` (Cloudflare D1) |
 | Roster import | `scripts/import-roster.mjs`, `scripts/load-roster.mjs`, `scripts/roster-template.csv` |
 
-The model is called only from the server, with the API key from a Cloudflare secret. The working conversation is kept in the visitor's browser, signed with `SESSION_SECRET` so it can't be altered. The database stores the lead or applicant and a short summary per conversation, never the transcript. Résumés go to a private R2 bucket and are downloaded through the admin page.
+The model is called only from the server, with the API key from a Cloudflare secret. The working conversation is kept in the visitor's browser, signed with `SESSION_SECRET` so it can't be altered. The database stores the lead or applicant and a short summary per conversation, never the transcript. Résumés go to a private R2 bucket and are downloaded through the admin page. Caregiver applicants can attach one in the chat once their details are saved (PDF or Word, up to 5 MB); the bot never reads the file.
 
 ## Environments
 

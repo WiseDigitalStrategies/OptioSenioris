@@ -109,6 +109,11 @@
 
 .osc-form { display: flex; gap: 8px; align-items: flex-end; padding: 12px 16px; border-top: 1px solid var(--line, #c1c7cd); background: #fff; }
 .osc-form[hidden] { display: none; }
+.osc-attach { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border: 1px solid #8a959d; border-radius: 50%; background: #fff; color: var(--green, #054d49); cursor: pointer; }
+.osc-attach:hover { background: #eef3f1; }
+.osc-attach:disabled { opacity: 0.55; cursor: not-allowed; }
+.osc-attach[hidden] { display: none; }
+.osc-attach svg { width: 22px; height: 22px; }
 .osc-form textarea {
   flex: 1;
   min-height: 48px;

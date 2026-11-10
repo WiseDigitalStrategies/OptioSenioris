@@ -5,6 +5,8 @@
   "use strict";
 
   const API = "/api/chat";
+  const RESUME_API = "/api/resume";
+  const MAX_RESUME_BYTES = 5 * 1024 * 1024;
   const STORE = "osc-chat";
   const TURNSTILE_SRC = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
 
@@ -77,10 +79,14 @@
   const log = el("ol", { class: "osc-log", role: "log", "aria-live": "polite", "aria-label": "Conversation" });
   const input = el("textarea", { id: "osc-input", rows: 1, autocomplete: "off" });
   const sendBtn = el("button", { type: "submit", class: "osc-btn", text: "Send" });
+  const fileInput = el("input", { type: "file", accept: ".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document", class: "osc-sr", tabindex: "-1", "aria-hidden": "true" });
+  const attachBtn = el("button", { type: "button", class: "osc-attach", "aria-label": "Attach your resume (PDF or Word)", title: "Attach your resume (PDF or Word)", hidden: true }, clipIcon());
   const form = el(
     "form",
     { class: "osc-form", hidden: true },
     el("label", { for: "osc-input", class: "osc-sr", text: "Your message" }),
+    attachBtn,
+    fileInput,
     input,
     sendBtn,
   );
@@ -100,6 +106,21 @@
     const path = document.createElementNS(ns, "path");
     path.setAttribute("fill", "currentColor");
     path.setAttribute("d", "M4 3h16a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm3 6v2h2V9H7zm4 0v2h2V9h-2zm4 0v2h2V9h-2z");
+    svg.append(path);
+    return svg;
+  }
+
+  function clipIcon() {
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("aria-hidden", "true");
+    const path = document.createElementNS(ns, "path");
+    path.setAttribute("fill", "none");
+    path.setAttribute("stroke", "currentColor");
+    path.setAttribute("stroke-width", "2");
+    path.setAttribute("stroke-linecap", "round");
+    path.setAttribute("d", "M21 11.5l-8.6 8.6a5.5 5.5 0 0 1-7.8-7.8l8.9-8.9a3.7 3.7 0 0 1 5.2 5.2l-8.9 8.9a1.8 1.8 0 0 1-2.6-2.6l8.2-8.2");
     svg.append(path);
     return svg;
   }
@@ -191,6 +212,7 @@
     log.replaceChildren(...convo.log.map(renderEntry));
     form.hidden = false;
     input.maxLength = settings.maxMessageChars;
+    attachBtn.hidden = !convo.resumeUpload;
     input.focus();
     scrollDown();
   }
@@ -243,6 +265,8 @@
       typing.remove();
       if (res.ok) {
         convo.state = data.state;
+        convo.resumeUpload = Boolean(data.resumeUpload);
+        attachBtn.hidden = !convo.resumeUpload;
         addEntry({ who: "bot", text: data.reply, actions: data.actions });
         if (data.ended) form.hidden = true;
       } else if (data.error === "session_expired" || data.error === "verification_failed" || data.error === "too_large") {
@@ -258,6 +282,40 @@
       busy = false;
       sendBtn.disabled = false;
       if (!form.hidden) input.focus();
+    }
+  }
+
+  async function uploadResume(file) {
+    if (busy || !file) return;
+    const ext = file.name.toLowerCase().split(".").pop();
+    if (!["pdf", "doc", "docx"].includes(ext)) return addEntry({ who: "note", text: "Please choose a PDF or Word (.doc or .docx) file." });
+    if (file.size > MAX_RESUME_BYTES) return addEntry({ who: "note", text: "Your resume must be smaller than 5 MB." });
+    busy = true;
+    sendBtn.disabled = attachBtn.disabled = true;
+    const status = el("li", { class: "osc-msg osc-msg--note osc-typing", text: `Uploading ${file.name}...` });
+    log.append(status);
+    scrollDown();
+    try {
+      const fd = new FormData();
+      fd.append("state", convo.state);
+      fd.append("resume", file);
+      const res = await fetch(RESUME_API, { method: "POST", body: fd });
+      const data = await res.json().catch(() => ({}));
+      status.remove();
+      if (res.ok) {
+        convo.state = data.state;
+        addEntry({ who: "note", text: `Resume received: ${data.name}. Our team will see it with your details.` });
+      } else {
+        addEntry({ who: "note", text: data.message || `We couldn't upload that file. You can use the careers page instead, or call us on ${settings.phone}.` });
+      }
+    } catch {
+      status.remove();
+      addEntry({ who: "note", text: `We couldn't upload that file. Please check your connection, or call us on ${settings.phone}.` });
+    } finally {
+      busy = false;
+      sendBtn.disabled = attachBtn.disabled = false;
+      fileInput.value = "";
+      input.focus();
     }
   }
 
@@ -305,6 +363,8 @@
   function wire() {
     launcher.addEventListener("click", () => openPanel(document.body.dataset.chatMode || (/(^|\/)careers/.test(location.pathname) ? "caregiver" : "family"), launcher));
     closeBtn.addEventListener("click", closePanel);
+    attachBtn.addEventListener("click", () => fileInput.click());
+    fileInput.addEventListener("change", () => uploadResume(fileInput.files[0]));
     panel.addEventListener("keydown", (e) => {
       if (e.key === "Escape") closePanel();
     });
