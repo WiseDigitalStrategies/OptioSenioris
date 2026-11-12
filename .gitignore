@@ -5,3 +5,5 @@ dist/
 .dev.vars
 # Roster files with real names stay on your machine. Only the template is committed.
 roster/
+# Lead exports with families' details stay on your machine.
+leads/

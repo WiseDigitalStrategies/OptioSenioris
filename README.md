@@ -123,6 +123,16 @@ The staff spreadsheet contains SSNs and dates of birth. Process it only on your 
    ```
    The load adds and updates caregivers by name and never deletes anyone. Day-to-day changes can be made in the admin page.
 
+## Cleaning A Place for Mom lead exports
+
+APFM exports contain families' names and contact details. Process them only on your own computer, and never paste them into an AI chat.
+
+```bash
+python3 scripts/clean-apfm-leads.py "APFM Leads.xlsx" "APFM Leads July 2025.xlsx" --out leads/apfm-leads-clean.csv
+```
+
+The script reads both the table export and the portal copy-and-paste layout, drops portal text and free-text notes, merges duplicates by email or phone, and flags rows to check in `needs_review`. The `leads/` folder is git-ignored. Loading these into the Enquiries list needs an import step that hasn't been built yet.
+
 ## Admin page
 
 Go to https://optiosenioris.net/admin and sign in through Cloudflare Access. The dashboard has five sections, with counts of new items in the sidebar:
