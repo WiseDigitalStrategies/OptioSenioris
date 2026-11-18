@@ -126,7 +126,11 @@ APFM exports contain families' names and contact details. Process them only on y
 python3 scripts/clean-apfm-leads.py "APFM Leads.xlsx" "APFM Leads July 2025.xlsx" --out leads/apfm-leads-clean.csv
 ```
 
-The script reads both the table export and the portal copy-and-paste layout, drops portal text and free-text notes, merges duplicates by email or phone, and flags rows to check in `needs_review`. The `leads/` folder is git-ignored. Loading these into the Enquiries list needs an import step that hasn't been built yet.
+The script reads both the table export and the portal copy-and-paste layout, drops portal text and free-text notes, merges duplicates by email or phone, and flags rows to check in `needs_review`. The `leads/` folder is git-ignored. Then load the cleaned file into the Enquiries list:
+```bash
+node scripts/load-leads.mjs leads/apfm-leads-clean.csv --db production
+```
+Leads come in as "New" with the source "A Place for Mom", dated by referral date, with the advisor and anything to check in their notes. Anyone already in the database with the same email or phone is skipped, so it's safe to run again with a newer export. They have their own "A Place for Mom" filter in Enquiries and aren't counted as new site enquiries on the overview.
 
 ## Admin page
 

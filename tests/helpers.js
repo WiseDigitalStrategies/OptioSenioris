@@ -1,11 +1,12 @@
 // Test helpers: an in-memory D1 stand-in built on node:sqlite with the real
 // migration, a fixture roster of made-up caregivers, and a fake R2 bucket.
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import baseConfig from "../config/assistant.config.js";
 
-const MIGRATION = readFileSync(new URL("../migrations/0001_init.sql", import.meta.url), "utf8");
+const MIGRATIONS_DIR = new URL("../migrations/", import.meta.url);
+export const MIGRATIONS = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql")).sort().map((f) => ({ name: f, sql: readFileSync(new URL(f, MIGRATIONS_DIR), "utf8") }));
 
 function statement(db, sql, args) {
   const clean = () => args.map((a) => (a === undefined ? null : typeof a === "boolean" ? Number(a) : a));
@@ -17,9 +18,12 @@ function statement(db, sql, args) {
   };
 }
 
-export function testDb() {
+// Applies every migration in order, with foreign keys on as in D1. Pass a
+// count to stop part-way (used to test a migration against existing data).
+export function testDb(upTo = MIGRATIONS.length) {
   const db = new DatabaseSync(":memory:");
-  db.exec(MIGRATION);
+  db.exec("PRAGMA foreign_keys = ON;");
+  for (const m of MIGRATIONS.slice(0, upTo)) db.exec(m.sql);
   return {
     raw: db,
     prepare: (sql) => statement(db, sql, []),

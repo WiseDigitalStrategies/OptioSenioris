@@ -64,6 +64,10 @@
   const human = (v) => (v === null || v === undefined || v === "" ? "" : LABELS[v] ?? String(v).replace(/_/g, " ").replace(/^./, (c) => c.toUpperCase()));
 
   const data = { leads: [], escalations: [], applicants: [], roster: { caregivers: [], tags: [], credentials: [], statuses: [] } };
+  const SOURCES = { chat: ["Chat", "From the chat"], contact_form: ["Contact form", "From the contact form"], apfm: ["A Place for Mom", "A Place for Mom referral"] };
+  const source = (l, i) => (SOURCES[l.source] ?? [l.source, l.source])[i];
+  // Imported referral lists don't count as new site enquiries in the counts.
+  const isNewEnquiry = (l) => l.status === "new" && l.source !== "apfm";
   const ui = { leadFilter: "all", leadSearch: "", appFilter: "all", appSearch: "", escFilter: "open", rosterFilter: "active", rosterSearch: "" };
 
   // ---------- helpers ----------
@@ -155,7 +159,7 @@
     const [leads, escalations, applicants, roster] = await Promise.all([api("leads"), api("escalations"), api("applicants"), api("roster")]);
     Object.assign(data, { leads, escalations, applicants, roster });
     const set = (key, n) => (document.querySelector(`[data-count="${key}"]`).textContent = n ? String(n) : "");
-    set("leads", leads.filter((l) => l.status === "new").length);
+    set("leads", leads.filter(isNewEnquiry).length);
     set("escalations", escalations.filter((e) => e.status === "open").length);
     set("applicants", applicants.filter((a) => a.status === "new").length);
   }
@@ -175,7 +179,7 @@
   // ---------- overview ----------
 
   function showOverview() {
-    const newLeads = data.leads.filter((l) => l.status === "new");
+    const newLeads = data.leads.filter(isNewEnquiry);
     const open = data.escalations.filter((e) => e.status === "open");
     const urgentOpen = open.filter((e) => e.urgency === "urgent");
     const newApps = data.applicants.filter((a) => a.status === "new");
@@ -262,15 +266,15 @@
   // ---------- enquiries ----------
 
   function showLeads(selectedId) {
-    const filters = { all: "All", new: "New", contacted: "Contacted", intro_call_booked: "Intro call booked", placed: "Placed", closed: "Closed", bereavement: "Bereavement" };
+    const filters = { all: "All", new: "New", contacted: "Contacted", intro_call_booked: "Intro call booked", placed: "Placed", closed: "Closed", bereavement: "Bereavement", apfm: "A Place for Mom" };
     const items = data.leads.filter(
       (l) =>
-        (ui.leadFilter === "all" || l.status === ui.leadFilter || (ui.leadFilter === "bereavement" && l.status === "deceased_do_not_contact")) &&
-        matchesSearch(ui.leadSearch, l.contact_name, l.ref, l.phone, l.email, l.location),
+        (ui.leadFilter === "all" || l.status === ui.leadFilter || (ui.leadFilter === "bereavement" && l.status === "deceased_do_not_contact") || (ui.leadFilter === "apfm" && l.source === "apfm")) &&
+        matchesSearch(ui.leadSearch, l.contact_name, l.ref, l.phone, l.email, l.location, l.care_recipient),
     );
     const rerender = () => showLeads(selectedId);
     splitView({
-      head: pageHead("Enquiries", "Families and referral partners who asked for help, from the chat and the contact form."),
+      head: pageHead("Enquiries", "Families and referral partners who asked for help, from the chat, the contact form and A Place for Mom."),
       toolbar: el(
         "div",
         { class: "toolbar" },
@@ -288,7 +292,7 @@
       renderItem: (l, current) =>
         listItem(`#lead-${l.id}`, current, {
           title: l.contact_name,
-          sub: [human(l.service), l.location].filter(Boolean).join(" · ") || (l.source === "chat" ? "From the chat" : "From the contact form"),
+          sub: [human(l.service), l.location].filter(Boolean).join(" · ") || source(l, 1),
           badgeEl: badge(LEAD_STATUSES, l.status),
           date: l.created_at,
           urgent: l.urgency === "urgent" || l.escalated,
@@ -309,7 +313,7 @@
       el(
         "div",
         { class: "detail-head" },
-        el("div", {}, el("h2", { text: l.contact_name }), el("div", { class: "meta", text: `${l.ref} · ${l.source === "chat" ? "Chat" : "Contact form"} · ${longDate(l.created_at)}` })),
+        el("div", {}, el("h2", { text: l.contact_name }), el("div", { class: "meta", text: `${l.ref} · ${source(l, 0)} · ${longDate(l.created_at)}` })),
         el(
           "div",
           { class: "quick" },
@@ -328,7 +332,7 @@
           ["Best time to call", l.best_time],
           ["Type", l.visitor_type === "referral_partner" ? `Referral partner${l.organization ? `, ${l.organization}` : ""}${l.organization_role ? ` (${l.organization_role})` : ""}` : null],
           ["Relationship", l.relationship],
-          ["OK to contact", l.consent ? `Yes, given ${shortDate(l.consent_at)}` : "No"],
+          ["OK to contact", l.consent ? `Yes, given ${shortDate(l.consent_at)}` : l.source === "apfm" ? "Referred by A Place for Mom" : "No"],
         ]),
       ),
       block(
