@@ -72,14 +72,16 @@ export default {
     owner: null,
   },
 
-  // PLACEHOLDER: email. from must be an address on a domain onboarded to
-  // Cloudflare Email Sending. notifyTo receives every lead, applicant and
-  // escalation. Confirmation emails to visitors stay off until Alec approves
+  // Email through Cloudflare Email Sending. from must be on a domain onboarded
+  // to Email Sending (send.optiosenioris.net is). notifyTo receives every lead,
+  // applicant and escalation; applicantNotifyTo also receives applicant and
+  // resume alerts. Confirmation emails to visitors stay off until Alec approves
   // the wording.
   email: {
-    from: null,
-    fromName: "Optio Senioris Care Assistant",
+    from: "alerts@send.optiosenioris.net",
+    fromName: "Optio Senioris",
     notifyTo: [],
+    applicantNotifyTo: ["jillehersch@icloud.com"],
     confirmation: {
       enabled: false,
       familySubject: null,

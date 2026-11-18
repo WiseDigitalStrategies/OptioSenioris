@@ -129,6 +129,8 @@ test("caregiver applicants are saved as new and the roster is unchanged", async 
   assert.equal(a.status, "new");
   assert.equal(a.prn, 1);
   assert.deepEqual(JSON.parse(a.availability).mon, ["nights"]);
+  const alert = sent.find((m) => /caregiver applicant/.test(m.body.subject));
+  assert.deepEqual(alert.body.to, ["jill@example.test", ...config.email.applicantNotifyTo]);
   assert.deepEqual((await db.prepare("SELECT * FROM roster ORDER BY id").all()).results, before);
 });
 

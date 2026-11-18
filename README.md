@@ -63,18 +63,13 @@ Still to do before the chat appears on the live site. It stays hidden until `ANT
    - Copy the team domain (for example `optio.cloudflareaccess.com`) and the application's AUD tag into `ACCESS_TEAM_DOMAIN` and `ACCESS_AUD` in `wrangler.toml`.
    - The admin page and API return 403 until both are set, even if Access is configured.
    - Do the same for staging if you want the admin page there.
-4. **Email.** Notifications go out through Cloudflare Email Sending.
-   - Onboard the domain:
-   ```bash
-   npx wrangler email sending enable optiosenioris.net
-   ```
-   - Add the DNS records it asks for. The domain's SPF record currently ends in `-all` and covers Microsoft 365 and GoDaddy. Add Cloudflare's include to that same record; don't create a second SPF record, or Jill's mailboxes can break.
-   - Create an API token with Email Sending permission, then run the command below and paste the token:
+4. **Email.** Alerts go out through Cloudflare Email Sending from `alerts@send.optiosenioris.net`. The `send.optiosenioris.net` subdomain is already onboarded and its DNS records are in place. The main domain's records (Microsoft 365) are untouched.
+   - Applicant and resume alerts go to `email.applicantNotifyTo` in the config. Lead and flagged-chat alerts go to `email.notifyTo`, which is still empty.
+   - Still to do: create an API token with Email Sending permission, then run the command below and paste the token:
    ```bash
    npx wrangler pages secret put EMAIL_API_TOKEN --project-name optiosenioris
    ```
-   - In the config, set `email.from` (for example `assistant@optiosenioris.net`) and `email.notifyTo`.
-   - Until all of this is in place, emails are skipped, and leads still save to the database.
+   - Until the token is set, emails are skipped, and leads and applicants still save to the database.
 5. **Fill in the placeholders** in `config/assistant.config.js` as Jill confirms them (next section).
 6. **Load the real roster** (see "Updating the roster").
 
@@ -91,7 +86,7 @@ Everything Jill or Wise still has to confirm is in this one file. While a value 
 | `showCaregiverFirstNames` | false: families see the credential and reasons only |
 | `faq`, `pricingWording` | empty: the bot answers from the site pages and never quotes prices |
 | `booking` | empty: the bot says a team member will call to arrange a time |
-| `email` | empty: emails are skipped |
+| `email` | sends from `alerts@send.optiosenioris.net`; applicant alerts go to `applicantNotifyTo`; `notifyTo` is empty |
 | `privacy.policyUrl`, `retentionDays` | empty |
 | `floridaAbuseHotline` | unverified: the bot names the hotline without a number. Verify the number before launch |
 | `email.confirmation` | off until Alec approves the wording |

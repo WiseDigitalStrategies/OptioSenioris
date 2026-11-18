@@ -79,6 +79,9 @@ async function chatState(fields = {}) {
 
 test("a resume attached in the chat is stored privately on the saved applicant", async () => {
   env.SESSION_SECRET = TEST_SECRET;
+  Object.assign(env, { EMAIL_API_TOKEN: "tok", CF_ACCOUNT_ID: "acct" });
+  const sent = [];
+  globalThis.fetch = async (url, init) => (sent.push(JSON.parse(init.body)), new Response("{}"));
   const { id } = await db.prepare("INSERT INTO applicants (ref, source, name) VALUES ('OSC-CHAT01','chat','Morgan') RETURNING id").first();
   const res = await handleChatResume({ request: form("/api/resume", { state: await chatState({ applicantId: id }), resume: pdf() }), env, config });
   assert.equal(res.status, 200);
@@ -89,6 +92,10 @@ test("a resume attached in the chat is stored privately on the saved applicant",
   assert.match(a.resume_key, /^resumes\/[0-9a-f-]{36}\.pdf$/);
   assert.ok(env.RESUMES.store.has(a.resume_key));
 
+  assert.equal(sent.length, 1);
+  assert.match(sent[0].subject, /^Resume received from caregiver applicant OSC-CHAT01: Morgan$/);
+  assert.deepEqual(sent[0].to, config.email.applicantNotifyTo);
+  assert.equal(sent[0].from.address, "alerts@send.optiosenioris.net");
   // A second upload replaces the first file.
   const again = await handleChatResume({ request: form("/api/resume", { state: body.state, resume: pdf() }), env, config });
   assert.equal(again.status, 200);
