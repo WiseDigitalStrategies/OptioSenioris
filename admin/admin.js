@@ -68,7 +68,7 @@
   const source = (l, i) => (SOURCES[l.source] ?? [l.source, l.source])[i];
   // Imported referral lists don't count as new site enquiries in the counts.
   const isNewEnquiry = (l) => l.status === "new" && l.source !== "apfm";
-  const ui = { leadFilter: "all", leadSearch: "", appFilter: "all", appSearch: "", escFilter: "open", rosterFilter: "active", rosterSearch: "" };
+  const ui = { leadFilter: "all", leadCare: "any", leadSearch: "", appFilter: "all", appSearch: "", escFilter: "open", rosterFilter: "active", rosterSearch: "" };
 
   // ---------- helpers ----------
 
@@ -136,10 +136,10 @@
   function pageHead(title, subtitle, ...extra) {
     return el("header", { class: "page-head" }, el("div", {}, el("h1", { text: title }), subtitle ? el("p", { text: subtitle }) : null), extra);
   }
-  function chips(options, current, onPick) {
+  function chips(options, current, onPick, label = "Filter") {
     return el(
       "div",
-      { class: "chips", role: "group", "aria-label": "Filter" },
+      { class: "chips", role: "group", "aria-label": label },
       Object.entries(options).map(([value, label]) => el("button", { type: "button", class: "chip", "aria-pressed": String(value === current), text: label, onclick: () => onPick(value) })),
     );
   }
@@ -242,8 +242,9 @@
 
   // ---------- split view (enquiries and applicants) ----------
 
-  function splitView({ head, toolbar, items, selectedId, renderItem, renderDetail, emptyText, baseHash }) {
-    const selected = items.find((i) => i.id === selectedId) ?? null;
+  // all: every record, so the open one still shows when the filter hides it.
+  function splitView({ head, toolbar, items, all = items, selectedId, renderItem, renderDetail, emptyText, baseHash }) {
+    const selected = all.find((i) => i.id === selectedId) ?? null;
     const list = items.length
       ? el("ul", { class: "list" }, items.map((i) => el("li", {}, renderItem(i, i.id === selectedId))))
       : el("p", { class: "empty", text: emptyText });
@@ -265,11 +266,26 @@
 
   // ---------- enquiries ----------
 
+  const LIVES_IN = { "": "Not known", home: "At home", assisted_living: "Assisted living", memory_care: "Memory care", nursing_home: "Nursing home" };
+  const FUTURE_CARE = { higher_care: "Higher level of care later", private_duty: "Private duty" };
+  const careFilters = { any: "Any setting", assisted_living: "In assisted living", higher_care: "AL: higher care candidates", private_duty: "AL: private duty candidates" };
+  function careMatch(l, f) {
+    if (f === "any") return true;
+    if (l.lives_in !== "assisted_living") return false;
+    return f === "assisted_living" || (l.future_care || []).includes(f);
+  }
+  function careLine(l) {
+    if (!l.lives_in) return "";
+    const fc = (l.future_care || []).map((c) => (c === "higher_care" ? "higher care candidate" : "private duty candidate"));
+    return [LIVES_IN[l.lives_in], ...fc].join(" · ");
+  }
+
   function showLeads(selectedId) {
     const filters = { all: "All", new: "New", contacted: "Contacted", intro_call_booked: "Intro call booked", placed: "Placed", closed: "Closed", bereavement: "Bereavement", apfm: "A Place for Mom" };
     const items = data.leads.filter(
       (l) =>
         (ui.leadFilter === "all" || l.status === ui.leadFilter || (ui.leadFilter === "bereavement" && l.status === "deceased_do_not_contact") || (ui.leadFilter === "apfm" && l.source === "apfm")) &&
+        careMatch(l, ui.leadCare) &&
         matchesSearch(ui.leadSearch, l.contact_name, l.ref, l.phone, l.email, l.location, l.care_recipient),
     );
     const rerender = () => showLeads(selectedId);
@@ -284,15 +300,17 @@
           view.querySelector(".search").focus();
         }),
         chips(filters, ui.leadFilter, (v) => ((ui.leadFilter = v), rerender())),
+        chips(careFilters, ui.leadCare, (v) => ((ui.leadCare = v), rerender()), "Filter by where they live now"),
       ),
       items,
+      all: data.leads,
       selectedId,
       baseHash: "#enquiries",
       emptyText: data.leads.length ? "No enquiries match." : "No enquiries yet. They appear here as soon as someone gets in touch.",
       renderItem: (l, current) =>
         listItem(`#lead-${l.id}`, current, {
           title: l.contact_name,
-          sub: [human(l.service), l.location].filter(Boolean).join(" · ") || source(l, 1),
+          sub: careLine(l) || [human(l.service), l.location].filter(Boolean).join(" · ") || source(l, 1),
           badgeEl: badge(LEAD_STATUSES, l.status),
           date: l.created_at,
           urgent: l.urgency === "urgent" || l.escalated,
@@ -306,6 +324,8 @@
     const statusSel = el("select", { id: "lead-status" }, Object.entries(LEAD_STATUSES).map(([v, [t]]) => el("option", { value: v, selected: v === l.status, text: t })));
     const notes = el("textarea", { id: "lead-notes", placeholder: "Calls made, next steps, anything the team should know" });
     notes.value = l.notes || "";
+    const livesSel = el("select", { id: "lead-lives-in" }, Object.entries(LIVES_IN).map(([v, t]) => el("option", { value: v, selected: v === (l.lives_in || ""), text: t })));
+    const futureBoxes = Object.entries(FUTURE_CARE).map(([v, t]) => el("label", { class: "check" }, el("input", { type: "checkbox", value: v, checked: (l.future_care || []).includes(v) }), `Candidate: ${t.toLowerCase()}`));
     const quiet = l.status === "bereavement" || l.status === "deceased_do_not_contact";
     return el(
       "div",
@@ -365,6 +385,11 @@
               : el("p", { class: "note", text: "No caregiver on the roster covers this request." }),
           )
         : null,
+      block(
+        "Where they are now",
+        el("div", { class: "form-row" }, el("div", { class: "field" }, el("label", { for: "lead-lives-in", text: "Lives in" }), livesSel)),
+        el("div", { class: "form-row" }, futureBoxes),
+      ),
       block("Status and notes", el("div", { class: "form-row" }, el("div", { class: "field" }, el("label", { for: "lead-status", text: "Status" }), statusSel)), el("div", { class: "field" }, el("label", { for: "lead-notes", text: "Notes" }), notes)),
       el(
         "div",
@@ -375,7 +400,7 @@
           text: "Save changes",
           onclick: async () => {
             try {
-              await api(`leads/${l.id}`, { method: "PATCH", body: JSON.stringify({ status: statusSel.value, notes: notes.value }) });
+              await api(`leads/${l.id}`, { method: "PATCH", body: JSON.stringify({ status: statusSel.value, notes: notes.value, lives_in: livesSel.value, future_care: futureBoxes.map((b) => b.firstChild).filter((i) => i.checked).map((i) => i.value) }) });
               toast(`Saved ${l.ref}`);
               await loadAll();
               route();
@@ -474,6 +499,7 @@
         chips(filters, ui.appFilter, (v) => ((ui.appFilter = v), rerender())),
       ),
       items,
+      all: data.applicants,
       selectedId,
       baseHash: "#applicants",
       emptyText: data.applicants.length ? "No applicants match." : "No applicants yet.",

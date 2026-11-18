@@ -64,6 +64,24 @@ test("lead status can be set to the bereavement statuses, and leads can be delet
   assert.equal((await db.prepare("SELECT COUNT(*) AS n FROM leads").first()).n, 0);
 });
 
+test("the team can record where a family lives now and future care they may need", async () => {
+  await db.prepare("INSERT INTO leads (ref, source, contact_name, email) VALUES ('OS-TEST02','apfm','Robin','r@example.test')").run();
+  assert.equal((await call("PATCH", "leads/1", { lives_in: "assisted_living", future_care: ["private_duty", "higher_care"] })).status, 200);
+  let lead = (await call("GET", "leads")).data[0];
+  assert.equal(lead.lives_in, "assisted_living");
+  assert.deepEqual(lead.future_care, ["private_duty", "higher_care"]);
+  // Saving the status alone leaves them as they were.
+  await call("PATCH", "leads/1", { status: "contacted" });
+  lead = (await call("GET", "leads")).data[0];
+  assert.equal(lead.lives_in, "assisted_living");
+  assert.equal((await call("PATCH", "leads/1", { lives_in: "castle" })).status, 400);
+  assert.equal((await call("PATCH", "leads/1", { future_care: ["lottery"] })).status, 400);
+  await call("PATCH", "leads/1", { lives_in: "", future_care: [] });
+  lead = (await call("GET", "leads")).data[0];
+  assert.equal(lead.lives_in, null);
+  assert.deepEqual(lead.future_care, []);
+});
+
 test("roster can be added to and edited, with validation", async () => {
   const add = await call("POST", "roster", { first_name: "Harper", last_name: "New", credential: "RN", status: "hired", availability: { mon: ["am"] }, tags: ["hospice"] });
   assert.equal(add.status, 200);

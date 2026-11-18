@@ -136,7 +136,7 @@ Leads come in as "New" with the source "A Place for Mom", dated by referral date
 
 Go to https://optiosenioris.net/admin and sign in through Cloudflare Access. The dashboard has five sections, with counts of new items in the sidebar:
 - **Overview:** totals at a glance and a "Needs your attention" list of open flagged chats and new enquiries, urgent ones first.
-- **Enquiries:** search and filter by status; open one to see contact details (with Call and Email buttons), needs, schedule, suggested caregivers with reasons, and to set the status (including "Bereavement" and "Deceased: do not contact"), add notes, or delete it.
+- **Enquiries:** search and filter by status or by where the person lives now (for example everyone in assisted living who may later need a higher level of care or private duty help); open one to see contact details (with Call and Email buttons), needs, schedule, suggested caregivers with reasons, and to record where they live now and future care they may need, set the status (including "Bereavement" and "Deceased: do not contact"), add notes, or delete it.
 - **Flagged chats:** escalations such as emergencies, bereavement, routing, and no-match cases, with a "Mark handled" button.
 - **Applicants:** chat and careers-form applicants, a résumé download, status, and delete. Applicants never join the caregiver list automatically.
 - **Caregivers:** a table with each caregiver's week at a glance; add one, or click a name to change credential, status, availability and skills.
